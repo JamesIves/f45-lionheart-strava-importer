@@ -231,9 +231,6 @@ async function uploadTcxFile(
     formData.append("description", data.description);
     formData.append("data_type", data.data_type);
 
-    console.log("FormData headers:");
-    console.log(formData.getHeaders());
-
     const response = await fetch(STRAVA_UPLOAD_ENDPOINT, {
       method: "POST",
       headers: {

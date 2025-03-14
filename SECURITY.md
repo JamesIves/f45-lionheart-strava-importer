@@ -2,4 +2,4 @@
 
 ## Reporting a Vulnerability
 
-Please report any [security related concerns as an issue here](https://github.com/{REPLACE_WITH_REPO_NAME}/security/advisories/new).
+Please report any [security related concerns as an issue here](https://github.com/JamesIves/f45-lionheart-strava-importer/security/advisories/new).

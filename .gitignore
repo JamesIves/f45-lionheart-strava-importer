@@ -128,3 +128,10 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+
+# DotEnv
+.env
+
+# Temp files
+*.tcx
+DS_Store

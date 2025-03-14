@@ -1,0 +1,50 @@
+name: Import F45 Lionheart Data to Strava 📊
+
+on:
+  workflow_dispatch:
+    inputs:
+      CLASS_DATE:
+        description: "F45 Class Date (YYYY-MM-DD)"
+        required: true
+        default: "2023-01-01"
+      CLASS_TIME:
+        description: "F45 Class Time (HH:MM)"
+        required: true
+        default: "09:30"
+      STUDIO_CODE:
+        description: "F45 Studio Code (e.g. '7bpy')"
+        required: true
+        default: "default_studio_code"
+      USER_ID:
+        description: "F45 User ID "
+        required: true
+        default: "<Your F45 User ID>"
+      LIONHEART_SERIAL_NUMBER:
+        description: "F45 Lionheart Serial Number"
+        required: true
+        default: "<Your Lionheart Serial Number>"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: ".node-version"
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Run Node.js script
+        run: node --experimental-transform-types index.ts
+        env:
+          F45_CLASS_DATE: ${{ github.event.inputs.CLASS_DATE }}
+          F45_STUDIO_CODE: ${{ github.event.inputs.STUDIO_CODE }}
+          F45_USER_ID: ${{ github.event.inputs.USER_ID }}
+          F45_LIONHEART_SERIAL_NUMBER: ${{ github.event.inputs.LIONHEART_SERIAL_NUMBER }}
+          F45_CLASS_TIME: ${{ github.event.inputs.CLASS_TIME }}

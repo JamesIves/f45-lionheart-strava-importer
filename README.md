@@ -1,34 +1,78 @@
-# Project Starter Kit 🧰
+# F45 Lionheart Strava Importer
 
-This repository houses my own baseline project starter kit, which I use every time I spin up a new project on GitHub. Over time, I've formed opinions about how I want to manage my projects, including the types of labels I want and the tooling I use. This starter kit leverages GitHub's repository template feature and GitHub Actions to ensure everything is set up correctly to make spinning up a project quicker.
+<!-- <img align="right" width="128" height="auto"  src="./.github/docs/icon.png" alt="Icon"> -->
 
-This template does the following:
+This simple script pulls workout session data from the publicly available, yet undocumented, F45 Lionheart API and uploads it to Strava.
 
-1. Establishes opinionated pull request and issue labels, these live in `labels.json`.
-2. Adds issue, pull request and funding templates.
-3. Establishes a standard `dependabot.yml` configuration that can be expanded upon based on project type.
-4. Adds auto-label functionality based on [Conventional Commit].
-5. Adds a `release.yml` file that properly formats release notes in GitHub's Release tab based on the auto-label feature.
-6. Creates a callout for GitHub sponsors in the README.
+> [!IMPORTANT]
+> In March of 2025 the official Lionheart -> Strava integration stopped working with no time commitment from F45 on when it will be fixed. As I want to be able to continue tracking my fitness progress in combination with my other training I built my own integration. I will maintain this functionality for as long as the official integration is broken, or until F45 turns off public access to their API.
 
-Special thank you to all the past and present [GitHub Sponsors](https://github.com/sponsors/JamesIves) 💖.
+## Getting Started
 
-<!-- sponsors --><!-- sponsors -->
+1. In your own private repository, create a `.github/workflows/upload.yml` file.
+2. Add the following contents.
 
-## Getting Started ⚙️
+```yml
+name: Import F45 Lionheart Data to Strava 📊
 
-The following steps outline how you can use this template:
+on:
+  workflow_dispatch:
+    inputs:
+      CLASS_DATE:
+        description: "F45 Class Date (YYYY-MM-DD)"
+        required: true
+        default: "2023-01-01"
+      CLASS_TIME:
+        description: "F45 Class Time (HH:MM)"
+        required: true
+        default: "09:30"
+      STUDIO_CODE:
+        description: "F45 Studio Code (e.g. '7bpy')"
+        required: true
+      USER_ID:
+        description: "F45 User ID "
+        required: true
+        default: "<Your F45 User ID>"
+      LIONHEART_SERIAL_NUMBER:
+        description: "F45 Lionheart Serial Number"
+        required: true
+        default: "<Your Lionheart Serial Number>"
 
-1. Select the `Use this template` > `Create a new repository` button at the top and give the new repository a name.
-2. Go to the repository settings, enable `Discussions`, and optionally enable `Sponsorships`.
-3. If you want to add your GitHub Sponsors to your README, create a personal access token with `user:read` and `org:read` scopes and configure it under `Settings -> Secrets and Variables -> Actions -> Repository Secrets` and call it `PERSONAL_ACCESS_TOKEN`. You can then move `<!-- sponsors -->` marker in your README wherever you want your sponsorship information to display. If you don't want sponsorships to display, simply delete `.github/workflows/sponsors.yml`.
-4. Run the `Repository Setup` workflow by going to `Actions -> Repository Setup`. This will replace all of the placeholders scattered across the repository with your GitHub username and the repository name you defined. It will also set all of the labels in `labels.json` and clean up the setup files.
-5. Replace this README and add anything else you need such as license files, code of conducts, etc. Best of luck!
+jobs:
+  build:
+    runs-on: ubuntu-latest
 
-## Maintenance 🔧
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-This template has two variables that get replaced across all file types when `setup.yml` is executed by GitHub Actions.
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: ".node-version"
 
-- `JamesIves/f45-lionheart-strava-importer` - This will replace the placeholder with the full repo name (this includes the username), for example `JamesIves/project-starter-kit`.
+      - name: Install Dependencies
+        run: npm ci
 
-- `JamesIves` - This will replace placeholder with the owner of the repo, ie `MontezumaIves`.
+      - name: Run Node.js script
+        uses: JamesIves/f45-lionheart-strava-importer@main
+        env:
+          F45_CLASS_DATE: ${{ github.event.inputs.CLASS_DATE }}
+          F45_STUDIO_CODE: ${{ github.event.inputs.STUDIO_CODE }}
+          F45_USER_ID: ${{ github.event.inputs.USER_ID }}
+          F45_LIONHEART_SERIAL_NUMBER: ${{ github.event.inputs.LIONHEART_SERIAL_NUMBER }}
+          F45_CLASS_TIME: ${{ github.event.inputs.CLASS_TIME }}
+          STRAVA_ACCESS_TOKEN: ${{ secrets.STRAVA_ACCESS_TOKEN }}
+          STRAVA_REFRESH_TOKEN: ${{ secrets.STRAVA_REFRESH_TOKEN }}
+          STRAVA_CLIENT_ID: ${{ secrets.STRAVA_CLIENT_ID }}
+```
+
+3. Go to `Settings -> Secrets and Variables -> Secrets`, add one for `STRAVA_ACCESS_TOKEN`, `STRAVA_REFRESH_TOKEN`, and `STRAVA_CLIENT_ID`. You can find what the values for these are by following the documentation found [here](https://developers.strava.com/docs/getting-started/). **These are basically credentials, do not store them directly in the workflow**.
+4. Go to `Actions -> Import F45 Lionheart Data to Strava 📊 > Run Workflow`. Fill out all of the required data and run it.
+5. If all the data was inputted correctly your workout will be uploaded to Strava very similarly to how it was using the official integration when it worked. Some things will be missing, such as the chart images but those are not trivial to add.
+
+Alternatively you can follow the same steps as above but instead run the script locally with `npm run import`.
+
+## Note
+
+This script is in no way endorsed, associated, or affiliated with F45. I'm just an avid user and customer who misses their data.

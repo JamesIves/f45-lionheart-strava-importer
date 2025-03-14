@@ -1,0 +1,43 @@
+name: "F45 Lionheart Strava Importer"
+description: "Fetches a workout from the F45 Lionheart API and pushes it to Strava. 🦁"
+author: "James Ives <iam@jamesiv.es> (https://jives.dev)"
+runs:
+  using: "node20"
+  main: "lib/main.js"
+branding:
+  icon: "heart"
+  color: "blue"
+inputs:
+  STRAVA_CLIENT_ID:
+    description: "Your Strava Client ID"
+    required: true
+  STRAVA_CLIENT_SECRET:
+    description: "Your Strava Client Secret"
+    required: true
+  STRAVA_REFRESH_TOKEN:
+    description: "Your Strava Refresh Token"
+    required: true
+  F45_CLASS_DATE:
+    description: "The date that the F45 Class was taken, this should be in the format YYYY-MM-DD."
+    required: true
+    default: "2025-03-14"
+  F45_CLASS_TIME:
+    description: "The time of the F45 Class, this should be in 24 hour format and mirror the time the class was scheduled to start."
+    required: true
+    default: "06:30"
+  F45_STUDIO_CODE:
+    description: "The F45 Studio Code where the class was taken"
+    required: true
+    default: ""
+  F45_USER_ID:
+    description: "Your F45 User ID"
+    required: true
+    default: ""
+  F45_LIONHEART_SERIAL_NUMBER:
+    description: "Your F45 Lionheart Serial Number"
+    required: true
+    default: "366418"
+
+outputs:
+  deployment-status:
+    description: "The status of the deployment that indicates if the run failed or passed. Possible outputs include: success|failed|skipped"

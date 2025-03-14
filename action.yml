@@ -3,7 +3,7 @@ description: "Fetches a workout from the F45 Lionheart API and pushes it to Stra
 author: "James Ives <iam@jamesiv.es> (https://jives.dev)"
 runs:
   using: "node20"
-  main: "lib/main.js"
+  main: "dist/index.js"
 branding:
   icon: "heart"
   color: "blue"

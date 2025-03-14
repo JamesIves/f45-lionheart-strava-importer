@@ -73,6 +73,5 @@ jobs:
 
 Alternatively you can follow the same steps as above but instead run the script locally with `npm run import`.
 
-## Note
-
-This script is in no way endorsed, associated, or affiliated with F45. I'm just an avid user and customer who misses their data.
+> [!NOTE]
+> This script is in no way endorsed, associated, or affiliated with F45. I'm just an avid user and customer who misses their data.

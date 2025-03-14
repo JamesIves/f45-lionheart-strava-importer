@@ -52,11 +52,11 @@ jobs:
           F45_LIONHEART_SERIAL_NUMBER: ${{ github.event.inputs.LIONHEART_SERIAL_NUMBER }}
           F45_CLASS_TIME: ${{ github.event.inputs.CLASS_TIME }}
           STRAVA_REFRESH_TOKEN: ${{ secrets.STRAVA_REFRESH_TOKEN }}
-          STRAVA_CLIENT_SECRET: ${{ secrets.STRAVA_ACCESS_TOKEN }}
+          STRAVA_CLIENT_SECRET: ${{ secrets.STRAVA_CLIENT_SECRET }}
           STRAVA_CLIENT_ID: ${{ secrets.STRAVA_CLIENT_ID }}
 ```
 
-3. Go to `Settings -> Secrets and Variables -> Secrets`, add one for `STRAVA_ACCESS_TOKEN`, `STRAVA_REFRESH_TOKEN`, and `STRAVA_CLIENT_ID`. You can find what the values for these are by following the documentation found [here](https://developers.strava.com/docs/getting-started/). **These are basically credentials, do not store them directly in the workflow**.
+3. Go to `Settings -> Secrets and Variables -> Secrets`, add one for `STRAVA_CLIENT_ID`, `STRAVA_CLIENT_SECRET`, and `STRAVA_REFRESH_TOKEN`. You can find what the values for these are by following the documentation found [here](https://developers.strava.com/docs/getting-started/). **These are basically credentials, do not store them directly in the workflow**.
 4. Go to `Actions -> Import F45 Lionheart Data to Strava 📊 > Run Workflow`. Fill out all of the required data and run it.
 5. If all the data was inputted correctly your workout will be uploaded to Strava very similarly to how it was using the official integration when it worked. Some things will be missing, such as the chart images but those are not trivial to add.
 

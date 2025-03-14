@@ -224,7 +224,6 @@ async function uploadTcxFile(
 ) {
   try {
     const file = fs.createReadStream(filePath);
-    console.log(file);
     const formData = new FormData();
     formData.append("file", file);
     formData.append("name", data.name);
@@ -391,9 +390,7 @@ async function main(): Promise<void> {
   const tokenResponse: {
     access_token: string;
   } = await getAccessToken();
-  console.log(`Access Token: ${tokenResponse.access_token}`);
   const res: ILionheartSession | null = await fetchJsonData();
-  console.log(res);
 
   if (res) {
     const tcxData = generateTcx(res);

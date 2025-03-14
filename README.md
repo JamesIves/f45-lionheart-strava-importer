@@ -43,20 +43,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version-file: ".node-version"
-
-      - name: Install Dependencies
-        run: npm ci
-
       - name: Run Node.js script
         uses: JamesIves/f45-lionheart-strava-importer@main
-        env:
+        with:
           F45_CLASS_DATE: ${{ github.event.inputs.CLASS_DATE }}
           F45_STUDIO_CODE: ${{ github.event.inputs.STUDIO_CODE }}
           F45_USER_ID: ${{ github.event.inputs.USER_ID }}

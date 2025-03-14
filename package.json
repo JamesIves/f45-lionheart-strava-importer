@@ -11,11 +11,12 @@
   "author": "James Ives <iam@jamesiv.es> (https://jives.dev)",
   "license": "MIT",
   "devDependencies": {
+    "@actions/core": "1.11.1",
     "@types/node": "22.13.10",
     "@vercel/ncc": "^0.38.3",
     "dotenv": "16.4.7",
-    "form-data": "^4.0.2",
-    "node-fetch": "^3.3.2",
+    "form-data": "4.0.2",
+    "node-fetch": "3.3.2",
     "typescript": "5.8.2",
     "xmlbuilder2": "3.1.1"
   }

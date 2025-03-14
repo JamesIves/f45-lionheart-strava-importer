@@ -3,6 +3,7 @@ import { create } from "xmlbuilder2";
 import dotenv from "dotenv";
 import FormData from "form-data";
 import fetch from "node-fetch";
+import { getInput } from "@actions/core";
 
 /**
  * Load environment variables from a .env file.
@@ -10,22 +11,41 @@ import fetch from "node-fetch";
 dotenv.config();
 
 /**
+ * Utility function that checks to see if a value is undefined or not.
+ * If allowEmptyString is passed the parameter is allowed to contain an empty string as a valid parameter.
+ */
+export const isNullOrUndefined = (
+  value: unknown
+): value is undefined | null | "" =>
+  typeof value === "undefined" || value === null || value === "";
+
+/**
  * The Strava client ID.
  * This can be found in the Strava API settings.
  */
-const STRAVA_CLIENT_ID = process.env.STRAVA_CLIENT_ID;
+const STRAVA_CLIENT_ID = !isNullOrUndefined(getInput("STRAVA_CLIENT_ID"))
+  ? getInput("STRAVA_CLIENT_ID")
+  : process.env.STRAVA_CLIENT_ID;
 
 /**
  * The Strava client secret.
  * This can be found in the Strava API settings.
  */
-const STRAVA_CLIENT_SECRET = process.env.STRAVA_CLIENT_SECRET;
+const STRAVA_CLIENT_SECRET = !isNullOrUndefined(
+  getInput("STRAVA_CLIENT_SECRET")
+)
+  ? getInput("STRAVA_CLIENT_SECRET")
+  : process.env.STRAVA_CLIENT_SECRET;
 
 /**
  * The Strava refresh token.
  * You can get this by following the Strava API documentation: https://developers.strava.com/docs/getting-started/
  */
-const STRAVA_REFRESH_TOKEN = process.env.STRAVA_REFRESH_TOKEN;
+const STRAVA_REFRESH_TOKEN = !isNullOrUndefined(
+  getInput("STRAVA_REFRESH_TOKEN")
+)
+  ? getInput("STRAVA_REFRESH_TOKEN")
+  : process.env.STRAVA_REFRESH_TOKEN;
 
 /**
  * The Strava token endpoint.
@@ -252,11 +272,27 @@ function saveTcxFile(tcxData: string, filePath: string) {
  * Fetches the JSON data from the undocumented Lionheart API.
  */
 async function fetchJsonData(): Promise<ILionheartSession | null> {
-  const CLASS_DATE = process.env.F45_CLASS_DATE;
-  const STUDIO_CODE = process.env.F45_STUDIO_CODE;
-  const USER_ID = process.env.F45_USER_ID;
-  const LIONHEART_SERIAL_NUMBER = process.env.F45_LIONHEART_SERIAL_NUMBER;
-  let CLASS_TIME = process.env.F45_CLASS_TIME;
+  const CLASS_DATE = !isNullOrUndefined(getInput("F45_CLASS_DATE"))
+    ? getInput("F45_CLASS_DATE")
+    : process.env.F45_CLASS_DATE;
+
+  const STUDIO_CODE = !isNullOrUndefined(getInput("F45_STUDIO_CODE"))
+    ? getInput("F45_STUDIO_CODE")
+    : process.env.F45_STUDIO_CODE;
+
+  const USER_ID = !isNullOrUndefined(getInput("F45_USER_ID"))
+    ? getInput("F45_USER_ID")
+    : process.env.F45_USER_ID;
+
+  const LIONHEART_SERIAL_NUMBER = !isNullOrUndefined(
+    getInput("F45_LIONHEART_SERIAL_NUMBER")
+  )
+    ? getInput("F45_LIONHEART_SERIAL_NUMBER")
+    : process.env.F45_LIONHEART_SERIAL_NUMBER;
+
+  let CLASS_TIME = !isNullOrUndefined(getInput("F45_CLASS_TIME"))
+    ? getInput("F45_CLASS_TIME")
+    : process.env.F45_CLASS_TIME;
 
   if (CLASS_TIME) {
     CLASS_TIME = CLASS_TIME.replace(":", "");

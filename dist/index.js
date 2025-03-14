@@ -68350,7 +68350,6 @@ function uploadTcxFile(accessToken, filePath, data) {
                 case 0:
                     _a.trys.push([0, 4, , 5]);
                     file = fs_1.default.createReadStream(filePath);
-                    console.log(file);
                     formData = new form_data_1.default();
                     formData.append("file", file);
                     formData.append("name", data.name);
@@ -68520,11 +68519,9 @@ function main() {
                 case 0: return [4 /*yield*/, getAccessToken()];
                 case 1:
                     tokenResponse = _a.sent();
-                    console.log("Access Token: ".concat(tokenResponse.access_token));
                     return [4 /*yield*/, fetchJsonData()];
                 case 2:
                     res = _a.sent();
-                    console.log(res);
                     if (!res) return [3 /*break*/, 4];
                     tcxData = generateTcx(res);
                     workoutName = res.data.workout.name;

@@ -9,8 +9,7 @@ This simple script pulls workout session data from the publicly available, yet u
 
 ## Getting Started
 
-1. In your own private repository, create a `.github/workflows/upload.yml` file.
-2. Add the following contents.
+You can include the action in your workflow to trigger on a workflow_dispatch event, allowing you to decide what date and time to import. It's recommended that you store the other data points as a secret to maintain privacy.
 
 ```yml
 name: Import F45 Lionheart Data to Strava 📊
@@ -26,17 +25,6 @@ on:
         description: "F45 Class Time (HH:MM)"
         required: true
         default: "09:30"
-      STUDIO_CODE:
-        description: "F45 Studio Code (e.g. '7bpy')"
-        required: true
-      USER_ID:
-        description: "F45 User ID "
-        required: true
-        default: "<Your F45 User ID>"
-      LIONHEART_SERIAL_NUMBER:
-        description: "F45 Lionheart Serial Number"
-        required: true
-        default: "<Your Lionheart Serial Number>"
 
 jobs:
   build:
@@ -47,20 +35,29 @@ jobs:
         uses: JamesIves/f45-lionheart-strava-importer@main
         with:
           F45_CLASS_DATE: ${{ github.event.inputs.CLASS_DATE }}
-          F45_STUDIO_CODE: ${{ github.event.inputs.STUDIO_CODE }}
-          F45_USER_ID: ${{ github.event.inputs.USER_ID }}
-          F45_LIONHEART_SERIAL_NUMBER: ${{ github.event.inputs.LIONHEART_SERIAL_NUMBER }}
           F45_CLASS_TIME: ${{ github.event.inputs.CLASS_TIME }}
+          F45_STUDIO_CODE: ${{ secrets.F45_STUDIO_CODE }}
+          F45_USER_ID: ${{ secrets.F45_USER_ID }}
+          F45_LIONHEART_SERIAL_NUMBER: ${{ secrets.F45_LIONHEART_SERIAL_NUMBER }}
           STRAVA_REFRESH_TOKEN: ${{ secrets.STRAVA_REFRESH_TOKEN }}
           STRAVA_CLIENT_SECRET: ${{ secrets.STRAVA_CLIENT_SECRET }}
           STRAVA_CLIENT_ID: ${{ secrets.STRAVA_CLIENT_ID }}
 ```
 
-3. Go to `Settings -> Secrets and Variables -> Secrets`, add one for `STRAVA_CLIENT_ID`, `STRAVA_CLIENT_SECRET`, and `STRAVA_REFRESH_TOKEN`. You can find what the values for these are by following the documentation found [here](https://developers.strava.com/docs/getting-started/). **These are basically credentials, do not store them directly in the workflow**.
-4. Go to `Actions -> Import F45 Lionheart Data to Strava 📊 > Run Workflow`. Fill out all of the required data and run it.
-5. If all the data was inputted correctly your workout will be uploaded to Strava very similarly to how it was using the official integration when it worked. Some things will be missing, such as the chart images but those are not trivial to add.
+### Configuration 📁
 
-Alternatively you can follow the same steps as above but instead run the script locally with `npm run import`.
+The `with` portion of the workflow **must** be configured before the action will work. You can add these in the `with` section found in the examples above. Any `secrets` must be referenced using the bracket syntax and stored in the GitHub repository's `Settings/Secrets` menu. You can learn more about setting environment variables with GitHub actions [here](https://help.github.com/en/actions/configuring-and-managing-workflows/creating-and-storing-encrypted-secrets#creating-encrypted-secrets).
+
+| Name                          | Secret | Description                                                              |
+| ----------------------------- | ------ | ------------------------------------------------------------------------ |
+| `F45_CLASS_DATE`              |        | The date of the F45 class, for example `2025-03-14`.                     |
+| `F45_STUDIO_CODE`             | ✅     | The code of the F45 studio, for example `7bpf`.                          |
+| `F45_USER_ID`                 | ✅     | The F45 user id..                                                        |
+| `F45_LIONHEART_SERIAL_NUMBER` | ✅     | The serial number of the F45 Lionheart device that recorded the workout. |
+| `F45_CLASS_TIME`              |        | The time of the F45 class, for example `09:30`.                          |
+| `STRAVA_REFRESH_TOKEN`        | ✅     | The refresh token for the Strava API.                                    |
+| `STRAVA_CLIENT_SECRET`        | ✅     | The client secret for the Strava API.                                    |
+| `STRAVA_CLIENT_ID`            | ✅     | The client ID for the Strava API.                                        |
 
 > [!NOTE]
 > This script is in no way endorsed, associated, or affiliated with F45. I'm just an avid user and customer who misses their data.

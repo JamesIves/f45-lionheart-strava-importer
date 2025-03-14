@@ -51,8 +51,8 @@ jobs:
           F45_USER_ID: ${{ github.event.inputs.USER_ID }}
           F45_LIONHEART_SERIAL_NUMBER: ${{ github.event.inputs.LIONHEART_SERIAL_NUMBER }}
           F45_CLASS_TIME: ${{ github.event.inputs.CLASS_TIME }}
-          STRAVA_ACCESS_TOKEN: ${{ secrets.STRAVA_ACCESS_TOKEN }}
           STRAVA_REFRESH_TOKEN: ${{ secrets.STRAVA_REFRESH_TOKEN }}
+          STRAVA_CLIENT_SECRET: ${{ secrets.STRAVA_ACCESS_TOKEN }}
           STRAVA_CLIENT_ID: ${{ secrets.STRAVA_CLIENT_ID }}
 ```
 

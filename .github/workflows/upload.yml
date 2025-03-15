@@ -3,14 +3,16 @@ name: Import F45 Lionheart Data to Strava 📊
 on:
   workflow_dispatch:
     inputs:
-      CLASS_DATE:
-        description: "F45 Class Date (YYYY-MM-DD)"
+      F45_CLASS_DATE:
+        description: "The date of the F45 class you want to import (YYYY-MM-DD)"
         required: true
         default: "2023-01-01"
-      CLASS_TIME:
-        description: "F45 Class Time (HH:MM)"
+      F45_CLASS_TIME:
+        description: "The time the class was scheduled that you want to import (HH:MM), 24-hour format"
         required: true
         default: "09:30"
+      F45_STUDIO_CODE:
+        description: "Override the stored environment variable for the studio code. This is useful if passporting at another studio."
 
 jobs:
   build:
@@ -20,9 +22,9 @@ jobs:
       - name: Run Node.js script
         uses: JamesIves/f45-lionheart-strava-importer@main
         with:
-          F45_CLASS_DATE: ${{ github.event.inputs.CLASS_DATE }}
-          F45_CLASS_TIME: ${{ github.event.inputs.CLASS_TIME }}
-          F45_STUDIO_CODE: ${{ secrets.F45_STUDIO_CODE }}
+          F45_CLASS_DATE: ${{ github.event.inputs.F45_CLASS_DATE }}
+          F45_CLASS_TIME: ${{ github.event.inputs.F45_CLASS_TIME }}
+          F45_STUDIO_CODE: ${{ github.event.inputs.STUDIO_CODE || secrets.F45_STUDIO_CODE }}
           F45_USER_ID: ${{ secrets.F45_USER_ID }}
           F45_LIONHEART_SERIAL_NUMBER: ${{ secrets.F45_LIONHEART_SERIAL_NUMBER }}
           STRAVA_REFRESH_TOKEN: ${{ secrets.STRAVA_REFRESH_TOKEN }}

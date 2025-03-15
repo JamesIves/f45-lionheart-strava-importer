@@ -24,7 +24,7 @@ jobs:
         with:
           F45_CLASS_DATE: ${{ github.event.inputs.F45_CLASS_DATE }}
           F45_CLASS_TIME: ${{ github.event.inputs.F45_CLASS_TIME }}
-          F45_STUDIO_CODE: ${{ github.event.inputs.STUDIO_CODE || secrets.F45_STUDIO_CODE }}
+          F45_STUDIO_CODE: ${{ github.event.inputs.F45_STUDIO_CODE || secrets.F45_STUDIO_CODE }}
           F45_USER_ID: ${{ secrets.F45_USER_ID }}
           F45_LIONHEART_SERIAL_NUMBER: ${{ secrets.F45_LIONHEART_SERIAL_NUMBER }}
           STRAVA_REFRESH_TOKEN: ${{ secrets.STRAVA_REFRESH_TOKEN }}

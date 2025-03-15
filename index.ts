@@ -467,12 +467,10 @@ async function main(): Promise<void> {
     let workoutDescription = `${session.data.summary.points} 🏆`;
 
     if (profile) {
-      workoutDescription = `
-    🥊 Average Score: ${profile?.data.summary.allTime.averagePoints} 📊
-    🥇 Current Class: ${session.data.summary.points} 🏆
-    💥 Max Score: ${profile?.data.summary.allTime.maxPoints} 🔝
-    🦁 Sessions: ${profile?.data.summary.allTime.sessionCount} 🏋️‍♂️
-    `;
+      workoutDescription = `🥊 Average Score: ${profile?.data.summary.allTime.averagePoints} 📊
+🥇 Current Class: ${session.data.summary.points}
+💥 Max Score: ${profile?.data.summary.allTime.maxPoints}
+🦁 Sessions: ${profile?.data.summary.allTime.sessionCount}`;
     }
 
     saveTcxFile(tcxData, "workout.tcx");

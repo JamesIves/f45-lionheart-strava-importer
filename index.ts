@@ -48,6 +48,29 @@ const STRAVA_REFRESH_TOKEN = !isNullOrUndefined(
   : process.env.STRAVA_REFRESH_TOKEN;
 
 /**
+ * The F45 Studio Code.
+ */
+const STUDIO_CODE = !isNullOrUndefined(getInput("F45_STUDIO_CODE"))
+  ? getInput("F45_STUDIO_CODE")
+  : process.env.F45_STUDIO_CODE;
+
+/**
+ * The F45 User ID.
+ */
+const USER_ID = !isNullOrUndefined(getInput("F45_USER_ID"))
+  ? getInput("F45_USER_ID")
+  : process.env.F45_USER_ID;
+
+/**
+ * The F45 Lionheart Serial Number.
+ */
+const LIONHEART_SERIAL_NUMBER = !isNullOrUndefined(
+  getInput("F45_LIONHEART_SERIAL_NUMBER")
+)
+  ? getInput("F45_LIONHEART_SERIAL_NUMBER")
+  : process.env.F45_LIONHEART_SERIAL_NUMBER;
+
+/**
  * The Strava token endpoint.
  */
 const STRAVA_TOKEN_ENDPOINT = "https://www.strava.com/api/v3/oauth/token";
@@ -59,7 +82,7 @@ const STRAVA_TOKEN_ENDPOINT = "https://www.strava.com/api/v3/oauth/token";
 const STRAVA_UPLOAD_ENDPOINT = "https://www.strava.com/api/v3/uploads";
 
 /**
- * Interface for the JSON data returned by the Lionheart API.
+ * Interface for the JSON data returned by the Lionheart Session API.
  * This describes the workout data including heart rate, calories, and more.
  * This data is pulled to generate the TCX file.
  */
@@ -164,6 +187,38 @@ interface ILionheartSession {
 }
 
 /**
+ * Interface for the JSON data returned by the Lionheart Profile API.
+ */
+interface ILionheartProfile {
+  status: number;
+  success: boolean;
+  data: {
+    summary: {
+      allTime: TimeframeSummary;
+      year: TimeframeSummary;
+      quarter: TimeframeSummary;
+      month: TimeframeSummary;
+      week: TimeframeSummary;
+    };
+  };
+}
+
+/**
+ * Interface for the TimeframeSummary object.
+ */
+interface TimeframeSummary {
+  timeframe: {
+    id: number;
+    name: string;
+    numberOfDays: number | null;
+  };
+  sessionCount: number;
+  averagePoints: number;
+  averageCalories: number;
+  maxPoints: number;
+}
+
+/**
  * Interface for the Strava token response.
  */
 interface IStravaTokenResponse {
@@ -265,26 +320,12 @@ function saveTcxFile(tcxData: string, filePath: string) {
 }
 
 /**
- * Fetches the JSON data from the undocumented Lionheart API.
+ * Fetches the workout session from the Lionheart API.
  */
-async function fetchJsonData(): Promise<ILionheartSession | null> {
+async function fetchLionheartSession(): Promise<ILionheartSession | null> {
   const CLASS_DATE = !isNullOrUndefined(getInput("F45_CLASS_DATE"))
     ? getInput("F45_CLASS_DATE")
     : process.env.F45_CLASS_DATE;
-
-  const STUDIO_CODE = !isNullOrUndefined(getInput("F45_STUDIO_CODE"))
-    ? getInput("F45_STUDIO_CODE")
-    : process.env.F45_STUDIO_CODE;
-
-  const USER_ID = !isNullOrUndefined(getInput("F45_USER_ID"))
-    ? getInput("F45_USER_ID")
-    : process.env.F45_USER_ID;
-
-  const LIONHEART_SERIAL_NUMBER = !isNullOrUndefined(
-    getInput("F45_LIONHEART_SERIAL_NUMBER")
-  )
-    ? getInput("F45_LIONHEART_SERIAL_NUMBER")
-    : process.env.F45_LIONHEART_SERIAL_NUMBER;
 
   let CLASS_TIME = !isNullOrUndefined(getInput("F45_CLASS_TIME"))
     ? getInput("F45_CLASS_TIME")
@@ -308,7 +349,34 @@ async function fetchJsonData(): Promise<ILionheartSession | null> {
 
     return data;
   } catch (error) {
-    console.error(`Failed to fetch data from Lionheart API: ${error} ❌`);
+    console.error(
+      `Failed to fetch data from Lionheart Session API: ${error} ❌`
+    );
+    return null;
+  }
+}
+
+/**
+ * Fetches the users profile data from the Lionheart API.
+ */
+async function fetchLionheartProfile(): Promise<ILionheartProfile | null> {
+  try {
+    const url = `https://api.lionheart.f45.com/v3/profile/sessions/summary?user_id=${USER_ID}`;
+    const response = await fetch(url);
+
+    if (!response.ok) {
+      throw new Error(
+        `Error fetching data from Lionheart API: ${response.statusText}`
+      );
+    }
+
+    const data = (await response.json()) as ILionheartProfile;
+
+    return data;
+  } catch (error) {
+    console.error(
+      `Failed to fetch data from Lionheart Profile API: ${error} ❌`
+    );
     return null;
   }
 }
@@ -390,17 +458,27 @@ async function main(): Promise<void> {
   const tokenResponse: {
     access_token: string;
   } = await getAccessToken();
-  const res: ILionheartSession | null = await fetchJsonData();
+  const session: ILionheartSession | null = await fetchLionheartSession();
+  const profile: ILionheartProfile | null = await fetchLionheartProfile();
 
-  if (res) {
-    const tcxData = generateTcx(res);
-    const workoutName = res.data.workout.name;
-    const workoutDescription = `${res.data.summary.points} Points 🏆`;
+  if (session) {
+    const tcxData = generateTcx(session);
+    const workoutName = session.data.workout.name;
+    let workoutDescription = `${session.data.summary.points} 🏆`;
+
+    if (profile) {
+      workoutDescription = `
+    🥊 Average Score: ${profile?.data.summary.allTime.averagePoints} 📊
+    🥇 Current Class: ${session.data.summary.points} 🏆
+    💥 Max Score: ${profile?.data.summary.allTime.maxPoints} 🔝
+    🦁 Sessions: ${profile?.data.summary.allTime.sessionCount} 🏋️‍♂️
+    `;
+    }
 
     saveTcxFile(tcxData, "workout.tcx");
 
     const uploadData = {
-      name: `${res.data.studio.name} - ${workoutName}`,
+      name: `${session.data.studio.name} - ${workoutName}`,
       description: workoutDescription,
       data_type: "tcx",
     };

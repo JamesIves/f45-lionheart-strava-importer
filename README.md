@@ -2,7 +2,7 @@
 
 <!-- <img align="right" width="128" height="auto"  src="./.github/docs/icon.png" alt="Icon"> -->
 
-This simple script pulls workout session data from the publicly available, yet undocumented, [F45 Lionheart](https://f45training.com/) API and uploads it to [Strava](https://strava.com/).
+This simple script pulls workout session data from the publicly available, yet undocumented, [F45 Lionheart API](https://f45training.com/) and uploads it to [Strava](https://strava.com/). It can be run independently or in a [GitHub Action](https://github.com/features/actions) workflow.
 
 > [!NOTE]
 > In March of 2025 the official Lionheart / Strava integration stopped working with no time commitment from F45 on when it will be fixed. As I want to be able to continue tracking my fitness progress in combination with my other training I built my own integration. I will maintain this functionality for myself for as long as the official integration is broken, or until F45 turns off public access to their API.
@@ -47,6 +47,8 @@ jobs:
           STRAVA_CLIENT_SECRET: ${{ secrets.STRAVA_CLIENT_SECRET }}
           STRAVA_CLIENT_ID: ${{ secrets.STRAVA_CLIENT_ID }}
 ```
+
+Alternatively you can run the script locally by setting the required inputs as environment variables and running `npm run import`.
 
 ### Configuration 📁
 

@@ -68294,6 +68294,24 @@ var STRAVA_REFRESH_TOKEN = !(0, exports.isNullOrUndefined)((0, core_1.getInput)(
     ? (0, core_1.getInput)("STRAVA_REFRESH_TOKEN")
     : process.env.STRAVA_REFRESH_TOKEN;
 /**
+ * The F45 Studio Code.
+ */
+var STUDIO_CODE = !(0, exports.isNullOrUndefined)((0, core_1.getInput)("F45_STUDIO_CODE"))
+    ? (0, core_1.getInput)("F45_STUDIO_CODE")
+    : process.env.F45_STUDIO_CODE;
+/**
+ * The F45 User ID.
+ */
+var USER_ID = !(0, exports.isNullOrUndefined)((0, core_1.getInput)("F45_USER_ID"))
+    ? (0, core_1.getInput)("F45_USER_ID")
+    : process.env.F45_USER_ID;
+/**
+ * The F45 Lionheart Serial Number.
+ */
+var LIONHEART_SERIAL_NUMBER = !(0, exports.isNullOrUndefined)((0, core_1.getInput)("F45_LIONHEART_SERIAL_NUMBER"))
+    ? (0, core_1.getInput)("F45_LIONHEART_SERIAL_NUMBER")
+    : process.env.F45_LIONHEART_SERIAL_NUMBER;
+/**
  * The Strava token endpoint.
  */
 var STRAVA_TOKEN_ENDPOINT = "https://www.strava.com/api/v3/oauth/token";
@@ -68392,26 +68410,17 @@ function saveTcxFile(tcxData, filePath) {
     }
 }
 /**
- * Fetches the JSON data from the undocumented Lionheart API.
+ * Fetches the workout session from the Lionheart API.
  */
-function fetchJsonData() {
+function fetchLionheartSession() {
     return __awaiter(this, void 0, void 0, function () {
-        var CLASS_DATE, STUDIO_CODE, USER_ID, LIONHEART_SERIAL_NUMBER, CLASS_TIME, url, response, data, error_3;
+        var CLASS_DATE, CLASS_TIME, url, response, data, error_3;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
                     CLASS_DATE = !(0, exports.isNullOrUndefined)((0, core_1.getInput)("F45_CLASS_DATE"))
                         ? (0, core_1.getInput)("F45_CLASS_DATE")
                         : process.env.F45_CLASS_DATE;
-                    STUDIO_CODE = !(0, exports.isNullOrUndefined)((0, core_1.getInput)("F45_STUDIO_CODE"))
-                        ? (0, core_1.getInput)("F45_STUDIO_CODE")
-                        : process.env.F45_STUDIO_CODE;
-                    USER_ID = !(0, exports.isNullOrUndefined)((0, core_1.getInput)("F45_USER_ID"))
-                        ? (0, core_1.getInput)("F45_USER_ID")
-                        : process.env.F45_USER_ID;
-                    LIONHEART_SERIAL_NUMBER = !(0, exports.isNullOrUndefined)((0, core_1.getInput)("F45_LIONHEART_SERIAL_NUMBER"))
-                        ? (0, core_1.getInput)("F45_LIONHEART_SERIAL_NUMBER")
-                        : process.env.F45_LIONHEART_SERIAL_NUMBER;
                     CLASS_TIME = !(0, exports.isNullOrUndefined)((0, core_1.getInput)("F45_CLASS_TIME"))
                         ? (0, core_1.getInput)("F45_CLASS_TIME")
                         : process.env.F45_CLASS_TIME;
@@ -68434,9 +68443,39 @@ function fetchJsonData() {
                     return [2 /*return*/, data];
                 case 4:
                     error_3 = _a.sent();
-                    console.error("Failed to fetch data from Lionheart API: ".concat(error_3, " \u274C"));
+                    console.error("Failed to fetch data from Lionheart Session API: ".concat(error_3, " \u274C"));
                     return [2 /*return*/, null];
                 case 5: return [2 /*return*/];
+            }
+        });
+    });
+}
+/**
+ * Fetches the users profile data from the Lionheart API.
+ */
+function fetchLionheartProfile() {
+    return __awaiter(this, void 0, void 0, function () {
+        var url, response, data, error_4;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    _a.trys.push([0, 3, , 4]);
+                    url = "https://api.lionheart.f45.com/v3/profile/sessions/summary?user_id=".concat(USER_ID);
+                    return [4 /*yield*/, (0, node_fetch_1.default)(url)];
+                case 1:
+                    response = _a.sent();
+                    if (!response.ok) {
+                        throw new Error("Error fetching data from Lionheart API: ".concat(response.statusText));
+                    }
+                    return [4 /*yield*/, response.json()];
+                case 2:
+                    data = (_a.sent());
+                    return [2 /*return*/, data];
+                case 3:
+                    error_4 = _a.sent();
+                    console.error("Failed to fetch data from Lionheart Profile API: ".concat(error_4, " \u274C"));
+                    return [2 /*return*/, null];
+                case 4: return [2 /*return*/];
             }
         });
     });
@@ -68513,35 +68552,41 @@ function generateTcx(res) {
  */
 function main() {
     return __awaiter(this, void 0, void 0, function () {
-        var tokenResponse, res, tcxData, workoutName, workoutDescription, uploadData, uploadResponse;
+        var tokenResponse, session, profile, tcxData, workoutName, workoutDescription, uploadData, uploadResponse;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0: return [4 /*yield*/, getAccessToken()];
                 case 1:
                     tokenResponse = _a.sent();
-                    return [4 /*yield*/, fetchJsonData()];
+                    return [4 /*yield*/, fetchLionheartSession()];
                 case 2:
-                    res = _a.sent();
-                    if (!res) return [3 /*break*/, 4];
-                    tcxData = generateTcx(res);
-                    workoutName = res.data.workout.name;
-                    workoutDescription = "".concat(res.data.summary.points, " Points \uD83C\uDFC6");
+                    session = _a.sent();
+                    return [4 /*yield*/, fetchLionheartProfile()];
+                case 3:
+                    profile = _a.sent();
+                    if (!session) return [3 /*break*/, 5];
+                    tcxData = generateTcx(session);
+                    workoutName = session.data.workout.name;
+                    workoutDescription = "".concat(session.data.summary.points, " \uD83C\uDFC6");
+                    if (profile) {
+                        workoutDescription = "\n    \uD83E\uDD4A Average Score: ".concat(profile === null || profile === void 0 ? void 0 : profile.data.summary.allTime.averagePoints, " \uD83D\uDCCA\n    \uD83E\uDD47 Current Class: ").concat(session.data.summary.points, " \uD83C\uDFC6\n    \uD83D\uDCA5 Max Score: ").concat(profile === null || profile === void 0 ? void 0 : profile.data.summary.allTime.maxPoints, " \uD83D\uDD1D\n    \uD83E\uDD81 Sessions: ").concat(profile === null || profile === void 0 ? void 0 : profile.data.summary.allTime.sessionCount, " \uD83C\uDFCB\uFE0F\u200D\u2642\uFE0F\n    ");
+                    }
                     saveTcxFile(tcxData, "workout.tcx");
                     uploadData = {
-                        name: "".concat(res.data.studio.name, " - ").concat(workoutName),
+                        name: "".concat(session.data.studio.name, " - ").concat(workoutName),
                         description: workoutDescription,
                         data_type: "tcx",
                     };
                     return [4 /*yield*/, uploadTcxFile(tokenResponse.access_token, "workout.tcx", uploadData)];
-                case 3:
+                case 4:
                     uploadResponse = _a.sent();
                     console.log("Upload Response: ".concat(JSON.stringify(uploadResponse)));
                     console.log("Workout uploaded to Strava! 🦁");
-                    return [3 /*break*/, 5];
-                case 4:
+                    return [3 /*break*/, 6];
+                case 5:
                     console.error("No data fetched from Lionheart API. Please verify the details you provided and try again... 😔");
-                    _a.label = 5;
-                case 5: return [2 /*return*/];
+                    _a.label = 6;
+                case 6: return [2 /*return*/];
             }
         });
     });

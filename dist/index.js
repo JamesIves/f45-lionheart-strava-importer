@@ -68569,7 +68569,7 @@ function main() {
                     workoutName = session.data.workout.name;
                     workoutDescription = "".concat(session.data.summary.points, " \uD83C\uDFC6");
                     if (profile) {
-                        workoutDescription = "\n    \uD83E\uDD4A Average Score: ".concat(profile === null || profile === void 0 ? void 0 : profile.data.summary.allTime.averagePoints, " \uD83D\uDCCA\n    \uD83E\uDD47 Current Class: ").concat(session.data.summary.points, " \uD83C\uDFC6\n    \uD83D\uDCA5 Max Score: ").concat(profile === null || profile === void 0 ? void 0 : profile.data.summary.allTime.maxPoints, " \uD83D\uDD1D\n    \uD83E\uDD81 Sessions: ").concat(profile === null || profile === void 0 ? void 0 : profile.data.summary.allTime.sessionCount, " \uD83C\uDFCB\uFE0F\u200D\u2642\uFE0F\n    ");
+                        workoutDescription = "\uD83E\uDD4A Average Score: ".concat(profile === null || profile === void 0 ? void 0 : profile.data.summary.allTime.averagePoints, " \uD83D\uDCCA\n\uD83E\uDD47 Current Class: ").concat(session.data.summary.points, "\n\uD83D\uDCA5 Max Score: ").concat(profile === null || profile === void 0 ? void 0 : profile.data.summary.allTime.maxPoints, "\n\uD83E\uDD81 Sessions: ").concat(profile === null || profile === void 0 ? void 0 : profile.data.summary.allTime.sessionCount);
                     }
                     saveTcxFile(tcxData, "workout.tcx");
                     uploadData = {

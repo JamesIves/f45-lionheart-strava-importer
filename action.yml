@@ -37,6 +37,10 @@ inputs:
     description: "Your F45 Lionheart Serial Number"
     required: true
     default: "366418"
+  DRY_RUN:
+    description: "If set to true the action will not push the workout to Strava."
+    required: false
+    default: "false"
 
 outputs:
   deployment-status:

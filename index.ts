@@ -71,6 +71,14 @@ const LIONHEART_SERIAL_NUMBER = !isNullOrUndefined(
   : process.env.F45_LIONHEART_SERIAL_NUMBER;
 
 /**
+ * If true, the script will not upload the workout to Strava.
+ * This is useful for testing the script without actually uploading the workout.
+ */
+const DRY_RUN = !isNullOrUndefined(getInput("DRY_RUN"))
+  ? getInput("DRY_RUN").toLowerCase() === "true"
+  : false;
+
+/**
  * The Strava token endpoint.
  */
 const STRAVA_TOKEN_ENDPOINT = "https://www.strava.com/api/v3/oauth/token";
@@ -394,7 +402,7 @@ function generateTcx(res: ILionheartSession): string {
         xmlns: "http://www.garmin.com/xmlschemas/TrainingCenterDatabase/v2",
       })
       .ele("Activities")
-      .ele("Activity", { Sport: "Other" })
+      .ele("Activity", { Sport: "AlpineSki" })
       .ele("Id")
       .txt(startTime.toISOString())
       .up()
@@ -475,19 +483,27 @@ async function main(): Promise<void> {
 
     saveTcxFile(tcxData, "workout.tcx");
 
-    const uploadData = {
-      name: `${session.data.studio.name} - ${workoutName}`,
-      description: workoutDescription,
-      data_type: "tcx",
-    };
+    if (!DRY_RUN) {
+      const uploadData = {
+        name: `${session.data.studio.name} - ${workoutName}`,
+        description: workoutDescription,
+        data_type: "tcx",
+      };
 
-    const uploadResponse = await uploadTcxFile(
-      tokenResponse.access_token,
-      "workout.tcx",
-      uploadData
-    );
-    console.log(`Upload Response: ${JSON.stringify(uploadResponse)}`);
-    console.log("Workout uploaded to Strava! 🦁");
+      const uploadResponse = await uploadTcxFile(
+        tokenResponse.access_token,
+        "workout.tcx",
+        uploadData
+      );
+
+      console.info(`Upload Response: ${JSON.stringify(uploadResponse)}`);
+      console.info("Workout uploaded to Strava! 🦁");
+    } else {
+      console.info("Workout data generated but not uploaded to Strava. 🦁");
+      console.info(
+        `Lionheart Data: ${JSON.stringify(session)} ${JSON.stringify(profile)}`
+      );
+    }
   } else {
     console.error(
       "No data fetched from Lionheart API. Please verify the details you provided and try again... 😔"

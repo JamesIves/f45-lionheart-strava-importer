@@ -400,7 +400,7 @@ function convertWorkoutTypeToActivity(type: string): string {
     case "hybrid":
       return "Workout";
     case "cardio":
-      return "HIIT";
+      return "HighIntensityIntervalTraining";
     default: 
       return "Other";
   } 

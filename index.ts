@@ -390,6 +390,21 @@ async function fetchLionheartProfile(): Promise<ILionheartProfile | null> {
 }
 
 /**
+ * Converts the Lionheart workout type to a 
+ * Strava activity type.
+function convertWorkoutTypeToActivity(type: string): string {
+  switch (type) {
+    case "resistance":
+      return "WeightTraining";
+    case "hybrid":
+      return "Workout";
+    case "cardio":
+      return "HIIT";
+    default: 
+      return "Other";
+  } 
+
+/**
  * Reformats the fetched data as a TCX file.
  */
 function generateTcx(res: ILionheartSession): string {
@@ -402,7 +417,7 @@ function generateTcx(res: ILionheartSession): string {
         xmlns: "http://www.garmin.com/xmlschemas/TrainingCenterDatabase/v2",
       })
       .ele("Activities")
-      .ele("Activity", { Sport: "AlpineSki" })
+      .ele("Activity", { Sport: convertWorkoutTypeToActivity(res.data.workout.type.name) })
       .ele("Id")
       .txt(startTime.toISOString())
       .up()

@@ -38,7 +38,7 @@ inputs:
     required: true
     default: "366418"
   DRY_RUN:
-    description: "If set to true the action will not push the workout to Strava."
+    description: "If set to true the script will not push the workout to Strava."
     required: false
     default: "false"
 

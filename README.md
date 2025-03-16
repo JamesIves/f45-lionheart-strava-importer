@@ -67,6 +67,7 @@ The `with` portion of the workflow **must** be configured before the action will
 | `STRAVA_REFRESH_TOKEN`        | ✅     | The refresh token for the Strava API. [Click here for details on how to get this data](https://developers.strava.com/docs/getting-started/).                                    |
 | `STRAVA_CLIENT_SECRET`        | ✅     | The client secret for the Strava API. [Click here for details on how to get this data](https://developers.strava.com/docs/getting-started/)                                     |
 | `STRAVA_CLIENT_ID`            | ✅     | The client ID for the Strava API. [Click here for details on how to get this data](https://developers.strava.com/docs/getting-started/)                                         |
+| `DRY_RUN`                     |        | If set to true the script will not push the workout to Strava.                                                                                                                  |
 
 ### Disclaimer 📜
 

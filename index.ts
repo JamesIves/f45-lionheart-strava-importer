@@ -392,6 +392,7 @@ async function fetchLionheartProfile(): Promise<ILionheartProfile | null> {
 /**
  * Converts the Lionheart workout type to a 
  * Strava activity type.
+ */
 function convertWorkoutTypeToActivity(type: string): string {
   switch (type) {
     case "resistance":

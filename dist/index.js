@@ -68312,6 +68312,13 @@ var LIONHEART_SERIAL_NUMBER = !(0, exports.isNullOrUndefined)((0, core_1.getInpu
     ? (0, core_1.getInput)("F45_LIONHEART_SERIAL_NUMBER")
     : process.env.F45_LIONHEART_SERIAL_NUMBER;
 /**
+ * If true, the script will not upload the workout to Strava.
+ * This is useful for testing the script without actually uploading the workout.
+ */
+var DRY_RUN = !(0, exports.isNullOrUndefined)((0, core_1.getInput)("DRY_RUN"))
+    ? (0, core_1.getInput)("DRY_RUN").toLowerCase() === "true"
+    : false;
+/**
  * The Strava token endpoint.
  */
 var STRAVA_TOKEN_ENDPOINT = "https://www.strava.com/api/v3/oauth/token";
@@ -68492,7 +68499,7 @@ function generateTcx(res) {
             xmlns: "http://www.garmin.com/xmlschemas/TrainingCenterDatabase/v2",
         })
             .ele("Activities")
-            .ele("Activity", { Sport: "Other" })
+            .ele("Activity", { Sport: "AlpineSki" })
             .ele("Id")
             .txt(startTime_1.toISOString())
             .up()
@@ -68564,7 +68571,7 @@ function main() {
                     return [4 /*yield*/, fetchLionheartProfile()];
                 case 3:
                     profile = _a.sent();
-                    if (!session) return [3 /*break*/, 5];
+                    if (!session) return [3 /*break*/, 7];
                     tcxData = generateTcx(session);
                     workoutName = session.data.workout.name;
                     workoutDescription = "".concat(session.data.summary.points, " \uD83C\uDFC6");
@@ -68572,6 +68579,7 @@ function main() {
                         workoutDescription = "\uD83E\uDD4A Average Score: ".concat(profile === null || profile === void 0 ? void 0 : profile.data.summary.allTime.averagePoints, "\n\uD83E\uDD47 Current Class: ").concat(session.data.summary.points, "\n\uD83D\uDCA5 Max Score: ").concat(profile === null || profile === void 0 ? void 0 : profile.data.summary.allTime.maxPoints, "\n\uD83E\uDD81 Sessions: ").concat(profile === null || profile === void 0 ? void 0 : profile.data.summary.allTime.sessionCount);
                     }
                     saveTcxFile(tcxData, "workout.tcx");
+                    if (!!DRY_RUN) return [3 /*break*/, 5];
                     uploadData = {
                         name: "".concat(session.data.studio.name, " - ").concat(workoutName),
                         description: workoutDescription,
@@ -68580,13 +68588,18 @@ function main() {
                     return [4 /*yield*/, uploadTcxFile(tokenResponse.access_token, "workout.tcx", uploadData)];
                 case 4:
                     uploadResponse = _a.sent();
-                    console.log("Upload Response: ".concat(JSON.stringify(uploadResponse)));
-                    console.log("Workout uploaded to Strava! 🦁");
+                    console.info("Upload Response: ".concat(JSON.stringify(uploadResponse)));
+                    console.info("Workout uploaded to Strava! 🦁");
                     return [3 /*break*/, 6];
                 case 5:
-                    console.error("No data fetched from Lionheart API. Please verify the details you provided and try again... 😔");
+                    console.info("Workout data generated but not uploaded to Strava. 🦁");
+                    console.info("Lionheart Data: ".concat(JSON.stringify(session), " ").concat(JSON.stringify(profile)));
                     _a.label = 6;
-                case 6: return [2 /*return*/];
+                case 6: return [3 /*break*/, 8];
+                case 7:
+                    console.error("No data fetched from Lionheart API. Please verify the details you provided and try again... 😔");
+                    _a.label = 8;
+                case 8: return [2 /*return*/];
             }
         });
     });

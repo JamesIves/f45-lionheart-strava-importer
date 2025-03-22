@@ -270,7 +270,7 @@ const getAccessToken = async (): Promise<IStravaTokenResponse> => {
 
     return response.json() as Promise<IStravaTokenResponse>;
   } catch (error) {
-    console.error(`Failed to get access token: ${error} ❌`);
+    console.error(`Failed to get access token for Strava, this is likely an issue with the Strava token configuration: ${error} ❌`);
     throw error;
   }
 };
@@ -304,7 +304,7 @@ async function uploadTcxFile(
     if (!response.ok) {
       const errorBody = await response.text();
       throw new Error(
-        `Error uploading TCX file: ${response.statusText} - ${errorBody}`
+        `Error uploading TCX file: ${response.statusText} - ${errorBody} ❌`
       );
     }
 

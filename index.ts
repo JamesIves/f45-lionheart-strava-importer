@@ -265,7 +265,7 @@ const getAccessToken = async (): Promise<IStravaTokenResponse> => {
     });
 
     if (!response.ok) {
-      throw new Error(`Error fetching access token: ${response.statusText}`);
+      throw new Error(`Error fetching access token: ${JSON.stringify(response.statusText)} ❌`);
     }
 
     return response.json() as Promise<IStravaTokenResponse>;

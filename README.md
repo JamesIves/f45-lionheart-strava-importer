@@ -35,7 +35,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Run Node.js script
+      - name: Import Session
         uses: JamesIves/f45-lionheart-strava-importer@main
         with:
           F45_CLASS_DATE: ${{ github.event.inputs.F45_CLASS_DATE }}

@@ -2,6 +2,9 @@
 
 <!-- <img align="right" width="128" height="auto"  src="./.github/docs/icon.png" alt="Icon"> -->
 
+> [!IMPORTANT]
+> As of the 9th of April 2025, F45 has re-enabled their official Strava integration meaning this workaround is no longer required! 🎉
+
 This simple script pulls workout session data from the publicly available, yet undocumented, [F45 Lionheart API](https://f45training.com/) and uploads it to [Strava](https://strava.com/). It can be run independently or in a [GitHub Action](https://github.com/features/actions) workflow.
 
 > [!NOTE]

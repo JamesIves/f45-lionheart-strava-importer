@@ -5,11 +5,8 @@
 > [!IMPORTANT]
 > As of the 9th of April 2025, F45 has re-enabled their official Strava integration meaning this workaround is no longer required! 🎉
 
-This simple script pulls workout session data from the publicly available, yet undocumented, [F45 Lionheart API](https://f45training.com/) and uploads it to [Strava](https://strava.com/). It can be run independently or in a [GitHub Action](https://github.com/features/actions) workflow.
+This simple script pulls workout session data from the publicly available, yet undocumented, [F45 Lionheart API](https://f45training.com/) and uploads it to [Strava](https://strava.com/). It can be run independently or in a [GitHub Action](https://github.com/features/actions) workflow. In March of 2025 the official Lionheart / Strava integration stopped working with no time commitment from F45 on when it will be fixed. As I want to be able to continue tracking my fitness progress in combination with my other training I built my own integration. 
 
-> [!NOTE]
-> In March of 2025 the official Lionheart / Strava integration stopped working with no time commitment from F45 on when it will be fixed. As I want to be able to continue tracking my fitness progress in combination with my other training I built my own integration. I will maintain this functionality for myself for as long as the official integration is broken, or until F45 turns off public access to their API.
->
 > [You can learn about my inspiration for this project here](https://jamesiv.es/blog/experiment/javascript/2025/03/14/f45-broke-my-beloved-strava-integration).
 
 ## Getting Started
